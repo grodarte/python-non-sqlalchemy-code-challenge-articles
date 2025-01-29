@@ -48,10 +48,13 @@ class Author:
         return list(set([magazine.category for magazine in self.magazines()])) or None
 
 class Magazine:
+    
+    all = []
 
     def __init__(self, name, category):
         self.name = name
         self.category = category
+        type(self).all.append(self)
 
     @property
     def name(self):
@@ -78,8 +81,24 @@ class Magazine:
         return list(set([article.author for article in self.articles()]))
 
     def article_titles(self):
-        return [article.title for article in Article.all if article.magazine == self] or None
+        #Returns a list of the titles strings of all articles written for that magazine
+        return [article.title for article in self.articles()] or None
 
     def contributing_authors(self):
         authors = [article.author for article in Article.all if article.magazine == self]
         return [author for author in authors if authors.count(author) > 1] or None
+
+    @classmethod
+    def top_publisher(cls):
+        # #returns magazine instance with most articles
+        top_pub = None
+        for magazine in Magazine.all:
+            if magazine.articles():
+                if top_pub:
+                    if len(magazine.articles()) > len(top_pub.articles()):
+                        top_pub = magazine
+                else:
+                    top_pub =  magazine
+                
+        return top_pub
+
